@@ -10,12 +10,12 @@ public class Money implements Expression {
         this.currency = currency;
     }
 
-    public Money times(int multiplier) {
+    public Expression times(int multiplier) {
         return new Money(amount * multiplier, this.currency);
     }
 
-    public Expression plus(Money addend) {
-        return new Money(amount + addend.amount, this.currency);
+    public Expression plus(Expression addend) {
+        return new Sum(this, addend);
     }
 
     public String currency() {
@@ -28,6 +28,12 @@ public class Money implements Expression {
 
     public static Money franc(int amount) {
         return new Money(amount, "CHF");
+    }
+
+    @Override
+    public Money reduce(Bank bank, String toCurrency) {
+        int rate = bank.rate(this.currency, toCurrency);
+        return new Money(amount / rate, toCurrency);
     }
 
     @Override
